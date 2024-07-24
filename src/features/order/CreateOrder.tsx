@@ -1,4 +1,6 @@
-// import { useState } from "react";
+import { useState } from "react";
+import { ActionFunction, Form, redirect } from "react-router-dom";
+import { createOrder } from "../../services/apiRestaurant";
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string) =>
@@ -31,14 +33,14 @@ const fakeCart = [
 ];
 
 function CreateOrder() {
-  // const [withPriority, setWithPriority] = useState(false);
+  const [withPriority, setWithPriority] = useState<boolean>(false);
   const cart = fakeCart;
 
   return (
     <div>
       <h2>Ready to order? Let's go!</h2>
 
-      <form>
+      <Form method="post">
         <div>
           <label>First Name</label>
           <input type="text" name="customer" required />
@@ -63,18 +65,36 @@ function CreateOrder() {
             type="checkbox"
             name="priority"
             id="priority"
-            // value={withPriority}
-            // onChange={(e) => setWithPriority(e.target.checked)}
+            checked={withPriority}
+            onChange={(e) => setWithPriority(e.target.checked)}
           />
           <label htmlFor="priority">Want to yo give your order priority?</label>
         </div>
 
         <div>
+          <input type="hidden" name="cart" value={JSON.stringify(fakeCart)} />
           <button>Order now</button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }
 
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  console.log(typeof data);
+  const orderAction = {
+    customer: data.customer as string,
+    phone: data.phone as string,
+    address: data.address as string,
+    cart: JSON.parse(data.cart as string),
+    priority: data.priority === "on",
+  };
+  console.log(orderAction);
+  const newOrder = await createOrder(orderAction);
+  console.log(newOrder);
+
+  return redirect(`/order/${newOrder.id}`);
+};
 export default CreateOrder;
