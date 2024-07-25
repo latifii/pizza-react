@@ -12,3 +12,5 @@ export type CartProps = Omit<
   Cart,
   "addIngredients" | "removeIngredients" | "unitPrice"
 >;
+
+export type CartState = Omit<Cart, "addIngredients" | "removeIngredients">;

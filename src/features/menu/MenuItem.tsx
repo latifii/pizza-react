@@ -3,10 +3,16 @@ import { formatCurrency } from "../../utils/helpers";
 import { MenuItemProps } from "./menu.type";
 const MenuItem: React.FC<MenuItemProps> = ({ pizza }) => {
   const { id, name, unitPrice, ingredients, soldOut, imageUrl } = pizza;
-
+  function handleAddCart() {
+    console.log(id);
+  }
   return (
     <li className="flex gap-4 py-2">
-      <img src={imageUrl} alt={name} />
+      <img
+        src={imageUrl}
+        alt={name}
+        className={`h-24 ${soldOut ? "opacity-70 grayscale" : ""}`}
+      />
       <div className="flex grow flex-col pt-0.5">
         <p className="font-medium">{name}</p>
         <p className="text-sm capitalize italic text-stone-500">
@@ -20,7 +26,11 @@ const MenuItem: React.FC<MenuItemProps> = ({ pizza }) => {
               Sold out
             </p>
           )}
-          <Button varient="small">Add to cart</Button>
+          {!soldOut && (
+            <Button varient="small" onClick={handleAddCart}>
+              Add to cart
+            </Button>
+          )}
         </div>
       </div>
     </li>
