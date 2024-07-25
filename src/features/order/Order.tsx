@@ -6,9 +6,9 @@ import {
   formatCurrency,
   formatDate,
 } from "../../utils/helpers";
-// import { OrderType } from "./order.types";
 import { getOrder } from "../../services/apiRestaurant";
 import { Order as OrderType } from "../../types/order.interface";
+import OrderItem from "./OrderItem";
 
 function Order() {
   const order = useLoaderData() as OrderType;
@@ -51,7 +51,11 @@ function Order() {
           (Estimated delivery: {formatDate(estimatedDelivery)})
         </p>
       </div>
-
+      <ul className="dive-stone-200 divide-y border-b border-t">
+        {cart.map((item) => (
+          <OrderItem key={item.pizzaId} {...item} />
+        ))}
+      </ul>
       <div className="space-y-2 bg-stone-200 px-6 py-5">
         <p className="text-sm font-medium text-stone-600">
           Price pizza: {formatCurrency(orderPrice)}

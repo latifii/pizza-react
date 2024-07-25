@@ -1,6 +1,12 @@
+import { CartProps } from "../../types/cart.type";
 import { formatCurrency } from "../../utils/helpers";
-function CartItem({ item }) {
-  const { pizzaId, name, quantity, totalPrice } = item;
+const CartItem: React.FC<CartProps> = ({
+  pizzaId,
+  name,
+  quantity,
+  totalPrice,
+}: CartProps) => {
+  // const { pizzaId, name, quantity, totalPrice } = item;
 
   return (
     <li className="py-3 sm:flex sm:items-center sm:justify-between">
@@ -12,6 +18,6 @@ function CartItem({ item }) {
       </div>
     </li>
   );
-}
+};
 
 export default CartItem;

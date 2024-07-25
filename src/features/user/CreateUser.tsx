@@ -1,7 +1,8 @@
 import { FormEvent, useState } from "react";
+import Button from "../../components/Button";
 
 function CreateUser() {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState<string>("");
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -23,7 +24,7 @@ function CreateUser() {
 
       {username !== "" && (
         <div>
-          <button>Start ordering</button>
+          <Button varient={"primary"}>Start ordering</Button>
         </div>
       )}
     </form>

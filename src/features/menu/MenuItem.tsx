@@ -1,3 +1,4 @@
+import Button from "../../components/Button";
 import { formatCurrency } from "../../utils/helpers";
 import { MenuItemProps } from "./menu.type";
 const MenuItem: React.FC<MenuItemProps> = ({ pizza }) => {
@@ -19,6 +20,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ pizza }) => {
               Sold out
             </p>
           )}
+          <Button varient="small">Add to cart</Button>
         </div>
       </div>
     </li>

@@ -1,13 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
 import HomePage from "../pages/HomePage.tsx";
 import MenuPage, { loader as menuLoader } from "../pages/MenuPage.tsx";
-import CartPage from "../pages/CartPage.tsx";
 import CreateOrder, {
   action as actionCreateOrder,
 } from "../features/order/CreateOrder.tsx";
 import Order, { loader as orderLoader } from "../features/order/Order.tsx";
 import AppLayout from "../pages/AppLayout.tsx";
 import Error from "../pages/Error.tsx";
+import Cart from "../pages/Cart.tsx";
 const route = createBrowserRouter([
   {
     element: <AppLayout />,
@@ -25,7 +25,7 @@ const route = createBrowserRouter([
       },
       {
         path: "/cart",
-        element: <CartPage />,
+        element: <Cart />,
       },
       {
         path: "/order/new",

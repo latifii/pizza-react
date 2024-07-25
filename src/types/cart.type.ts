@@ -7,3 +7,8 @@ export type Cart = {
   unitPrice: number;
   totalPrice: number;
 };
+
+export type CartProps = Omit<
+  Cart,
+  "addIngredients" | "removeIngredients" | "unitPrice"
+>;

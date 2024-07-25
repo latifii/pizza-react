@@ -1,7 +1,12 @@
+import { OrderItemProps } from "../../types/orderItem.type";
 import { formatCurrency } from "../../utils/helpers";
-
-function OrderItem({ item, isLoadingIngredients, ingredients }) {
-  const { quantity, name, totalPrice } = item;
+const OrderItem: React.FC<OrderItemProps> = ({
+  quantity,
+  name,
+  totalPrice,
+}) => {
+  // function OrderItem({ item, isLoadingIngredients, ingredients }) {
+  // const { quantity, name, totalPrice } = item;
 
   return (
     <li className="py-3">
@@ -13,6 +18,6 @@ function OrderItem({ item, isLoadingIngredients, ingredients }) {
       </div>
     </li>
   );
-}
+};
 
 export default OrderItem;
