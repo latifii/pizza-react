@@ -8,48 +8,41 @@ import {
 import { createOrder } from "../../services/apiRestaurant";
 import Button from "../../components/Button";
 import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import store, { AppDispatch, RootState } from "../../store/store";
+import { clearCart, getTotalPrice } from "../../store/slice/cartSlice";
+import { formatCurrency } from "../../utils/helpers";
+import EmptyCart from "../cart/EmptyCart";
+import { useDispatch } from "react-redux";
+import { fetchAddress } from "../../store/slice/userSlice";
 
 // https://uibakery.io/regex-library/phone-number
-const isValidPhone = (str: string) =>
-  /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
-    str,
-  );
-
-const fakeCart = [
-  {
-    pizzaId: 12,
-    name: "Mediterranean",
-    quantity: 2,
-    unitPrice: 16,
-    totalPrice: 32,
-  },
-  {
-    pizzaId: 6,
-    name: "Vegetale",
-    quantity: 1,
-    unitPrice: 13,
-    totalPrice: 13,
-  },
-  {
-    pizzaId: 11,
-    name: "Spinach and Mushroom",
-    quantity: 1,
-    unitPrice: 15,
-    totalPrice: 15,
-  },
-];
+// const isValidPhone = (str: string) =>
+//   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
+//     str,
+//   );
 
 function CreateOrder() {
+  const dispatch: AppDispatch = useDispatch();
   const [withPriority, setWithPriority] = useState<boolean>(false);
-  const cart = fakeCart;
+  const cart = useSelector((state: RootState) => state.cart.cart);
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
-  const user = useSelector((state: RootState) => state.user.username);
+  const {
+    username: user,
+    status,
+    position,
+    address,
+  } = useSelector((state: RootState) => state.user);
+  const isLoadingAddress = status === "loading";
+  const totalCartPrice = useSelector(getTotalPrice);
+  const priorityPrice = withPriority ? totalCartPrice * 0.2 : 0;
+  const totalPrice = totalCartPrice + priorityPrice;
+  if (!cart.length) return <EmptyCart />;
 
   return (
     <div className="px-4 py-6">
       <h2 className="mb-8 text-xl font-semibold">Ready to order? Let's go!</h2>
+
       <Form method="post">
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">First Name</label>
@@ -69,16 +62,27 @@ function CreateOrder() {
           </div>
         </div>
 
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">Address</label>
           <div className="grow">
             <input
               className="input w-full"
               type="text"
               name="address"
+              defaultValue={address}
               required
             />
           </div>
+          <span className="absolute right-[3px] top-[3px] z-50 md:right-[5px] md:top-[5px]">
+            <Button
+              varient={"small"}
+              type="button"
+              disabled={isLoadingAddress}
+              onClick={() => dispatch(fetchAddress())}
+            >
+              Get Location
+            </Button>
+          </span>
         </div>
 
         <div className="mb-12 flex items-center gap-5">
@@ -96,9 +100,11 @@ function CreateOrder() {
         </div>
 
         <div>
-          <input type="hidden" name="cart" value={JSON.stringify(fakeCart)} />
+          <input type="hidden" name="cart" value={JSON.stringify(cart)} />
           <Button varient={"primary"} disabled={isSubmitting}>
-            {isSubmitting ? "Placing order...." : "Order now"}
+            {isSubmitting
+              ? "Placing order...."
+              : `Order now ${formatCurrency(totalPrice)}`}
           </Button>
         </div>
       </Form>
@@ -117,9 +123,8 @@ export const action: ActionFunction = async ({ request }) => {
     cart: JSON.parse(data.cart as string),
     priority: data.priority === "on",
   };
-  console.log(orderAction);
   const newOrder = await createOrder(orderAction);
-  console.log(newOrder);
+  store.dispatch(clearCart());
 
   return redirect(`/order/${newOrder.id}`);
 };

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CartState } from "../../types/cart.type";
+import { RootState } from "../store";
 
 type CartStateType = {
   cart: CartState[];
@@ -32,6 +33,8 @@ const cartSlice = createSlice({
         item.quantity--;
         item.totalPrice = item?.quantity * item?.unitPrice;
       }
+      if (item?.quantity === 0)
+        cartSlice.caseReducers.deleteItem(state, action);
     },
     clearCart(state) {
       state.cart = [];
@@ -48,3 +51,12 @@ export const {
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
+
+export const getTotalQuantity = (state: RootState) =>
+  state.cart.cart.reduce((sum, item) => sum + item.quantity, 0);
+
+export const getTotalPrice = (state: RootState) =>
+  state.cart.cart.reduce((sum, item) => sum + item.totalPrice, 0);
+
+export const getCurrentQuantityById = (id: number) => (state: RootState) =>
+  state.cart.cart.find((item) => item.pizzaId === id)?.quantity ?? 0;
